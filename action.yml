@@ -97,9 +97,23 @@ runs:
       shell: bash
       run: ./tt/tt_tool.py --create-user-config $TT_ARGS
 
+    - name: Patch config s/mcu7t5v0/mcu9t5v0/g
+      shell: bash
+      run: sed -i 's/mcu7t5v0/mcu9t5v0/g' src/user_config.json
+
     - name: Install LibreLane
       shell: bash
       run: pip install librelane==${{ inputs.librelane-version }}
+
+    - name: Install PDK
+      shell: bash
+      run: |
+        pip install ciel
+        ciel enable 0fe599b2afb6708d281543108caf8310912f54af
+
+    - name: Fix PDK drc_exclude.cells
+      shell: bash
+      run: touch "$PDK_ROOT/$PDK/libs.tech/openlane/gf180mcu_fd_sc_mcu9t5v0/drc_exclude.cells"
 
     - name: Make GDS with LibreLane
       shell: bash
